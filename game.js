@@ -4,17 +4,20 @@ let userChosenColour = [];
 
 const buttonColours = ["red", "blue", "green", "yellow"];
 
-
 const audio_g = new Audio("./sounds/green.mp3");
 const audio_r = new Audio("./sounds/red.mp3");
 const audio_y = new Audio("./sounds/yellow.mp3");
 const audio_b = new Audio("./sounds/blue.mp3");
 
+let level = 0;
+
 const nextSequence = () => {
   let randomNumber = Math.floor(Math.random() * 4);
+  
+  $("#level").text(level);
+  console.log(level);
   return randomNumber;
 };
-
 
 const randomChosenColour = buttonColours[nextSequence()];
 
@@ -24,6 +27,18 @@ function flashBtn(id) {
     $("#" + id).removeClass("pressed");
   }, 100);
 }
+
+$(document).on("keypress", function (e) {
+  if (e.which == 13) {
+    $("#level-game").removeClass("hide");
+    $("#level-title").addClass("hide");
+  }
+  setTimeout(() => {
+    randomFlashBtn(randomChosenColour);
+  }, 500);
+});
+
+
 
 const randomFlashBtn = (id) => {
   $(`[id=${id}]`).each(function () {
@@ -50,11 +65,8 @@ $(".btn").on("click", function () {
     audio_b.play();
     flashBtn(result);
   }
-  
+  level++ ;
   nextSequence();
 });
 
-randomFlashBtn(randomChosenColour);
 gamePattern.push(randomChosenColour);
-
-
