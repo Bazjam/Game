@@ -1,8 +1,7 @@
-let userClickedPattern = [];
-let gamePattern = [];
-let userChosenColour = [];
+let gameRandomColor = [];
+let userChosenColor = [];
 
-const buttonColours = ["red", "blue", "green", "yellow"];
+const buttonColors = ["red", "blue", "green", "yellow"];
 
 const audio_g = new Audio("./sounds/green.mp3");
 const audio_r = new Audio("./sounds/red.mp3");
@@ -13,13 +12,15 @@ let level = 0;
 
 const nextSequence = () => {
   let randomNumber = Math.floor(Math.random() * 4);
-  
+
   $("#level").text(level);
-  console.log(level);
+  level++;
   return randomNumber;
 };
 
-const randomChosenColour = buttonColours[nextSequence()];
+const randomChosenColour = () => {
+  gameRandomColor.push(buttonColors[nextSequence()]); // create new id and add to []
+};
 
 function flashBtn(id) {
   $("#" + id).addClass("pressed");
@@ -28,27 +29,16 @@ function flashBtn(id) {
   }, 100);
 }
 
-$(document).on("keypress", function (e) {
-  if (e.which == 13) {
-    $("#level-game").removeClass("hide");
-    $("#level-title").addClass("hide");
-  }
-  setTimeout(() => {
-    randomFlashBtn(randomChosenColour);
-  }, 500);
-});
-
-
-
 const randomFlashBtn = (id) => {
   $(`[id=${id}]`).each(function () {
     flashBtn(id);
   });
 };
 
-$(".btn").on("click", function () {
-  let result = $(this).attr("id");
-  userChosenColour.push(result);
+const audioAndFlashBtn = (id) => {
+  let result = id;
+  userChosenColor.push(result);
+
   if (result === "green") {
     audio_g.play();
     flashBtn(result);
@@ -65,8 +55,51 @@ $(".btn").on("click", function () {
     audio_b.play();
     flashBtn(result);
   }
-  level++ ;
-  nextSequence();
+}
+// Enter
+$(document).on("keypress", function (e) {
+  if (e.which == 13) {
+    $("#level-game").removeClass("hide");
+    $("#level-title").addClass("hide");
+  }
+  
+  randomChosenColour(); // create new id and add to []
+  
+  setTimeout(() => {
+    randomFlashBtn(gameRandomColor[gameRandomColor.length - 1]);  // last element on []
+  }, 500);
+  
+  // console.log(gameRandomColor);
 });
 
-gamePattern.push(randomChosenColour);
+// Click
+$(".btn").on("click", function () {
+  randomChosenColour(); // create new id and add to []
+
+  audioAndFlashBtn($(this).attr("id"));
+  
+  // const compare = () => {
+  //   let click = 0;
+  //   console.log(userChosenColor.length);
+  //   console.log(gameRandomColor.length);
+
+  //   for (let i = 0; i < cars.length; i++) {
+  //   while (gameRandomColor.length < userChosenColor.length) {
+  //     if (
+  //       JSON.stringify(userChosenColor[click]) !==
+  //       JSON.stringify(gameRandomColor[click])
+  //     ) {
+  //       click++;
+  //       console.log(`100%` + click);
+  //     }
+  //   }
+  // };
+
+  // compare()
+
+  setTimeout(() => {
+    randomFlashBtn(gameRandomColor[gameRandomColor.length - 1]);  // Next Random id Flash
+  }, 1000);
+
+});
+
