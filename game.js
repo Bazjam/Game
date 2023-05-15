@@ -55,51 +55,46 @@ const audioAndFlashBtn = (id) => {
     audio_b.play();
     flashBtn(result);
   }
-}
+};
 // Enter
 $(document).on("keypress", function (e) {
-  if (e.which == 13) {
+  if (gameRandomColor.length === 0 && e.which == 13) {
     $("#level-game").removeClass("hide");
     $("#level-title").addClass("hide");
+    randomChosenColour(); // create new id and add to []
+    setTimeout(() => {
+      randomFlashBtn(gameRandomColor[gameRandomColor.length - 1]); // last element on []
+    }, 500);
   }
-  
-  randomChosenColour(); // create new id and add to []
-  
-  setTimeout(() => {
-    randomFlashBtn(gameRandomColor[gameRandomColor.length - 1]);  // last element on []
-  }, 500);
-  
-  // console.log(gameRandomColor);
 });
+
+const gameRules = () => {
+  const gameRandomColorLength = gameRandomColor.length - 2;
+  const userChosenColorLength = userChosenColor.length - 1;
+  let a = '4'
+
+  if (JSON.stringify(userChosenColor[userChosenColorLength]) === JSON.stringify(gameRandomColor[gameRandomColorLength])) {
+    setTimeout(() => {
+      randomFlashBtn(gameRandomColor[gameRandomColor.length - 1]); // Next Random id Flash
+    }, 1000);
+
+    console.log(`TRUE`);
+
+      } else if (a = `4`) {
+      console.log(`ZZZZZZZZZ`);
+      a = 5;
+    
+  
+  } else if(a = `4`){
+    console.log(`False 4`);
+  }
+};
 
 // Click
 $(".btn").on("click", function () {
   randomChosenColour(); // create new id and add to []
 
   audioAndFlashBtn($(this).attr("id"));
-  
-  // const compare = () => {
-  //   let click = 0;
-  //   console.log(userChosenColor.length);
-  //   console.log(gameRandomColor.length);
 
-  //   for (let i = 0; i < cars.length; i++) {
-  //   while (gameRandomColor.length < userChosenColor.length) {
-  //     if (
-  //       JSON.stringify(userChosenColor[click]) !==
-  //       JSON.stringify(gameRandomColor[click])
-  //     ) {
-  //       click++;
-  //       console.log(`100%` + click);
-  //     }
-  //   }
-  // };
-
-  // compare()
-
-  setTimeout(() => {
-    randomFlashBtn(gameRandomColor[gameRandomColor.length - 1]);  // Next Random id Flash
-  }, 1000);
-
+  gameRules();
 });
-
