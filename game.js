@@ -5,6 +5,7 @@ let userClickedPattern = [];
 
 let started = false;
 let level = 0;
+let gameStart = false;
 
 $(document).keypress(() => {
   if (!started) {
@@ -14,10 +15,12 @@ $(document).keypress(() => {
     },1000)
     
     started = true;
+    gameStart = true;
   }
 });
 
 $(".btn").click(function() {
+  if (gameStart){
 
   const userChosenColour = $(this).attr("id");
 
@@ -26,6 +29,7 @@ $(".btn").click(function() {
   animatePress(userChosenColour);
 
   checkAnswer(userClickedPattern.length-1);
+  }
 });
 
 const checkAnswer = (currentLevel) => {
@@ -41,7 +45,7 @@ const checkAnswer = (currentLevel) => {
       }
 
     } else {
-
+      gameStart = false;
       console.log("wrong");
 
       playSound("wrong");
@@ -52,6 +56,9 @@ const checkAnswer = (currentLevel) => {
       }, 200);
 
       $("#level-title").text("Game Over, Press Any Key to Restart");
+      $(document).keypress(() => {
+        location.reload();
+    });
     }
 
 }
