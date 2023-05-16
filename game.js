@@ -1,100 +1,83 @@
-let gameRandomColor = [];
-let userChosenColor = [];
+const buttonColours = ["red", "blue", "green", "yellow"];
 
-const buttonColors = ["red", "blue", "green", "yellow"];
+let gamePattern = [];
+let userClickedPattern = [];
 
-const audio_g = new Audio("./sounds/green.mp3");
-const audio_r = new Audio("./sounds/red.mp3");
-const audio_y = new Audio("./sounds/yellow.mp3");
-const audio_b = new Audio("./sounds/blue.mp3");
-
+let started = false;
 let level = 0;
 
-const nextSequence = () => {
-  let randomNumber = Math.floor(Math.random() * 4);
+$(document).keypress(() => {
+  if (!started) {
+    $("#level-title").text("Level " + level);
+    setTimeout(()=>{
+      nextSequence();
+    },1000)
+    
+    started = true;
+  }
+});
 
-  $("#level").text(level);
-  level++;
-  return randomNumber;
-};
+$(".btn").click(function() {
 
-const randomChosenColour = () => {
-  gameRandomColor.push(buttonColors[nextSequence()]); // create new id and add to []
-};
+  const userChosenColour = $(this).attr("id");
 
-function flashBtn(id) {
-  $("#" + id).addClass("pressed");
-  setTimeout(() => {
-    $("#" + id).removeClass("pressed");
-  }, 100);
+  userClickedPattern.push(userChosenColour);
+  playSound(userChosenColour);
+  animatePress(userChosenColour);
+
+  checkAnswer(userClickedPattern.length-1);
+});
+
+const checkAnswer = (currentLevel) => {
+
+    if (gamePattern[currentLevel] === userClickedPattern[currentLevel]) {
+
+      console.log("success");
+
+      if (userClickedPattern.length === gamePattern.length){
+        setTimeout(() => {
+          nextSequence();
+        }, 1000);
+      }
+
+    } else {
+
+      console.log("wrong");
+
+      playSound("wrong");
+
+      $("body").addClass("game-over");
+      setTimeout(() => {
+        $("body").removeClass("game-over");
+      }, 200);
+
+      $("#level-title").text("Game Over, Press Any Key to Restart");
+    }
+
 }
 
-const randomFlashBtn = (id) => {
-  $(`[id=${id}]`).each(function () {
-    flashBtn(id);
-  });
-};
+const nextSequence = () => {
 
-const audioAndFlashBtn = (id) => {
-  let result = id;
-  userChosenColor.push(result);
+  userClickedPattern = [];
+  level++;
+  $("#level-title").text("Level " + level);
 
-  if (result === "green") {
-    audio_g.play();
-    flashBtn(result);
-  }
-  if (result === "red") {
-    audio_r.play();
-    flashBtn(result);
-  }
-  if (result === "yellow") {
-    audio_y.play();
-    flashBtn(result);
-  }
-  if (result === "blue") {
-    audio_b.play();
-    flashBtn(result);
-  }
-};
-// Enter
-$(document).on("keypress", function (e) {
-  if (gameRandomColor.length === 0 && e.which == 13) {
-    $("#level-game").removeClass("hide");
-    $("#level-title").addClass("hide");
-    randomChosenColour(); // create new id and add to []
-    setTimeout(() => {
-      randomFlashBtn(gameRandomColor[gameRandomColor.length - 1]); // last element on []
-    }, 500);
-  }
-});
+  const randomNumber = Math.floor(Math.random() * 4);
+  const randomChosenColour = buttonColours[randomNumber];
+  gamePattern.push(randomChosenColour);
 
-const gameRules = () => {
-  const gameRandomColorLength = gameRandomColor.length - 2;
-  const userChosenColorLength = userChosenColor.length - 1;
-  let a = '4'
+  $("#" + randomChosenColour).fadeIn(100).fadeOut(100).fadeIn(100);
+  playSound(randomChosenColour);
+}
 
-  if (JSON.stringify(userChosenColor[userChosenColorLength]) === JSON.stringify(gameRandomColor[gameRandomColorLength])) {
-    setTimeout(() => {
-      randomFlashBtn(gameRandomColor[gameRandomColor.length - 1]); // Next Random id Flash
-    }, 1000);
+const playSound = (name) => {
+  const audio = new Audio("sounds/" + name + ".mp3");
+  audio.play();
+}
 
-    console.log(`TRUE`);
-
-      } else if (a = `4`) {
-      console.log(`ZZZZZZZZZ`);
-      a = 5;
-    
-  
-  } else if(a = `4`){
-    console.log(`False 4`);
-  }
-};
-
-// Click
-$(".btn").on("click", function () {
-  randomChosenColour(); // create new id and add to []
-
-  audioAndFlashBtn($(this).attr("id"));
-
-  gameRules();
-});
+const animatePress = (currentColor) => {
+  $("#" + currentColor).addClass("pressed");
+  setTimeout(() => {
+    $("#" + currentColor).removeClass("pressed");
+  }, 100);
+}
